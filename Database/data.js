@@ -1,3 +1,5 @@
+import { initializeApp } from 'firebase/app';
+import { getFirestore,  addDoc, collection, getDocs } from "firebase/firestore";
 import Transaction from "./transaction_model";
 
 const dataList = [
@@ -14,3 +16,61 @@ const dataList = [
 ]
 
 export default dataList; 
+
+class DBOperations {
+    collectionName = "transaction"
+    constructor() {
+        this.firebaseConfig = {
+            apiKey: "AIzaSyC5qV756ZCIPUfbNxZWkGTW0uaPlHndhAQ",
+            authDomain: "cross-platform-lab-d9201.firebaseapp.com",
+            projectId: "cross-platform-lab-d9201",
+            storageBucket: "cross-platform-lab-d9201.appspot.com",
+            messagingSenderId: "662396511992",
+            appId: "1:662396511992:web:84a3cae8597a39f9b8bd0d"
+          };
+          
+          this.app = initializeApp(this.firebaseConfig);
+          this.db = getFirestore(this.app)
+    }
+
+    async getTransaction() {
+        var transaction_list = []
+        try {
+            const snapshot = await getDocs(collection(this.db, this.collectionName))
+            snapshot.forEach((doc) => {
+                transaction_list.push(Transaction.fromJson(doc.id, doc.data()))
+            })
+        }catch(error){
+            console.log("Error occured : getTransaction() => ", error)
+        }finally{
+            return transaction_list
+        }
+    }
+
+    async addTransaction(transaction) {
+        try{
+            const docRef = await addDoc(collection(this.db, this.collectionName), transaction.toJson());
+            transaction.id = docRef.id
+            return transaction;
+        }catch(error){
+            console.log("Error occured : addTransaction() => ", error)
+        }
+    }
+
+    async pushBulkData(){
+        try{
+            dataList.forEach(async (transaction) => {
+                await addDoc(collection(this.db, this.collectionName), transaction.toJson())
+            })
+            console.log("Data Pushed")
+        }catch(error){
+            console.log("Error occured : addTransaction() => ", error)
+        }
+    }
+}
+
+const DB = new DBOperations()
+
+export { DB }
+
+ 

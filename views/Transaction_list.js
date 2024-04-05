@@ -2,12 +2,18 @@ import { View, StyleSheet, TouchableOpacity, Text, FlatList } from "react-native
 import Finance_model from "../Database/Finance_model";
 import Screens from "../Utils/screen_names";
 import { FontAwesome6 } from "@expo/vector-icons";
-function TransactionList({ navigation }) {
+import { useEffect, useState } from "react";
+import { DB } from "../Database/data";
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
+function TransactionList({ navigation, transactions, count }) {
+
     return (
         <View>
 
             <FlatList
-                data={Finance_model.data}
+                data={transactions}
                 style={styles.flatListStyle}
                 renderItem={({ item }) => {
                     return (
@@ -16,20 +22,27 @@ function TransactionList({ navigation }) {
                             onPress={() => navigation.navigate(Screens.transaction_detail, { id: item.id })}
                         >
                             <Text style={styles.listItemText}>{item.storeName}</Text>
-                            <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                                <Text style={{paddingRight: 6, fontWeight: '600'}}>{`$${item.amount.toFixed(2)}`}</Text>
-                                <FontAwesome6 name="arrow-right"/>
+                            <View style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                <Text style={{ paddingRight: 6, fontWeight: '600' }}>{`$${item.amount.toFixed(2)}`}</Text>
+                                <FontAwesome6 name="arrow-right" />
                             </View>
                         </TouchableOpacity>
                     );
                 }}
             />
-    
-            <Text style={styles.bottomCount}>{`${Finance_model.count} Transactions`}</Text>
+
+            <Text style={styles.bottomCount}>{`${count} Transactions`}</Text>
         </View>
 
     )
 }
+
+const mapStateToProps = (state) => ({
+    transactions: state.data,
+    count: state.count,
+});
+
+export default connect(mapStateToProps, null)(TransactionList);
 
 const styles = StyleSheet.create({
     listItem: {
@@ -38,7 +51,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         paddingVertical: 10,
         borderBottomWidth: 0.5
-
     },
     listItemText: {
         flex: 1,
@@ -47,12 +59,12 @@ const styles = StyleSheet.create({
     },
     bottomCount: {
         fontSize: 18,
-        paddingTop : 15,
+        paddingTop: 15,
         color: "gray",
-        textAlign : "center"
+        textAlign: "center"
     }
 
 });
 
 
-export default TransactionList
+// export default TransactionList

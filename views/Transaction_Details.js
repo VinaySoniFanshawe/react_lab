@@ -1,12 +1,11 @@
 import { View, Text, StyleSheet } from "react-native";
-import Finance_model from "../Database/Finance_model";
+import { connect } from "react-redux";
 
-function TransactionDetail({ route }) {
+function TransactionDetail({ route , transactions}) {
     const { id } = route.params;
-    const transaction = Finance_model.findById(id);
+    const transaction = transactions.find((transaction) => transaction.id == id);
     return (
         <View>
-
             <View style={styles.detailsContainer}>
                 <Text style={styles.amount}>${transaction.amount.toFixed(2)}</Text>
                 <Text style={styles.store}>{transaction.storeName}</Text>
@@ -20,6 +19,12 @@ function TransactionDetail({ route }) {
         </View>
     )
 }
+
+const mapStateToProps = (state) => ({
+    transactions: state.data,
+});
+
+export default connect(mapStateToProps, null)(TransactionDetail);
 
 const styles = StyleSheet.create({
     detailsContainer: {
@@ -53,5 +58,3 @@ const styles = StyleSheet.create({
         color: "gray",
     },
 });
-
-export default TransactionDetail

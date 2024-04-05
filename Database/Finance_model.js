@@ -5,8 +5,8 @@ class Finance {
     min = null
     total = 0
     constructor() {
-        this.data = dataList
-        this.count = dataList.length ?? 0
+        this.data = []
+        this.count = this.data.length ?? 0
         this.findMax()
         this.findMin()
         this.findTotal()
@@ -14,6 +14,7 @@ class Finance {
 
     findMax() {
         if(this.count == 0){
+            this.max = 0
             return
         }
         this.max = this.data.reduce(function(prev, curr) {
@@ -23,6 +24,7 @@ class Finance {
 
     findMin() {
         if(this.count == 0){
+            this.min = 0
             return
         }
         this.min = this.data.reduce(function(prev, curr) {
